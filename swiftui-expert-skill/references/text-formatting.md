@@ -254,7 +254,7 @@ struct MeasuredText: View {
     }
 }
 
-//Modern (correct)
+// Modern (correct)
 struct MeasuredText: View {
     let text: String
     @State private var textHeight: CGFloat = 0
