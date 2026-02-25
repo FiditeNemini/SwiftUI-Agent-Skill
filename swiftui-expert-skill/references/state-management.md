@@ -107,8 +107,7 @@ Use `@FocusState` to control text input focus in SwiftUI. Choose the focus value
 ### Bool vs enum
 
 - Use `@FocusState private var isFocused: Bool` when the view has a single focusable field.
-- Use a `Hashable` enum optional value for multiple fields.
-- Prefer an enum for readability and type safety when fields are known in advance.
+- Use a `Hashable` enum optional value for multiple fields, for better readability and type safety.
 
 ### Single Field: Bool
 
