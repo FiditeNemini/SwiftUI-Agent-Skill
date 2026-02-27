@@ -220,8 +220,8 @@ struct DebugView: View {
 }
 ```
 
-- `Self._printChanges()`: Prints to standard output. Use in LLDB or inline.
-- `Self._logChanges()` (Xcode 15.1+): Logs to the `com.apple.SwiftUI` subsystem with category "Changed Body Properties". Preferred for structured logging in Xcode 15+'s console.
+- `Self._printChanges()`: Prints which properties changed to standard output.
+- `Self._logChanges()` (iOS 17+): Logs to the `com.apple.SwiftUI` subsystem with category "Changed Body Properties", using `os_log` for structured output.
 
 Both print `@self` when the view value itself changed and `@identity` when the view's persistent data was recycled.
 

@@ -139,4 +139,4 @@ HStack {
 - [ ] Provide `accessibilityLabel` when default labels are unclear
 - [ ] Use `accessibilityRepresentation` for custom controls
 - [ ] Use `accessibilityAdjustableAction` for increment/decrement controls
-- [ ] Test with VoiceOver to verify navigation flow
+- [ ] Ensure navigation flow is logical when using VoiceOver grouping
