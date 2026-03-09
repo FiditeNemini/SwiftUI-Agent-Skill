@@ -208,11 +208,19 @@ struct SignUpView: View {
 The key distinction is **ownership**: `@StateObject` when the view **creates and owns** the object; `@ObservedObject` when the view **receives** it from outside.
 
 ```swift
-// View creates it → @StateObject
-@StateObject private var viewModel = MyViewModel()
+class MyViewModel: ObservableObject {
+    @Published var items: [String] = []
+}
 
-// View receives it → @ObservedObject
-@ObservedObject var viewModel: MyViewModel
+struct OwnerView: View {
+    @StateObject private var viewModel = MyViewModel()  // View creates it
+    var body: some View { ChildView(viewModel: viewModel) }
+}
+
+struct ChildView: View {
+    @ObservedObject var viewModel: MyViewModel  // View receives it
+    var body: some View { List(viewModel.items, id: \.self) { Text($0) } }
+}
 ```
 
 **Never** create an `ObservableObject` inline with `@ObservedObject` -- it recreates the instance on every view update.
@@ -222,15 +230,21 @@ The key distinction is **ownership**: `@StateObject` when the view **creates and
 Prefer storing the `@StateObject` in the parent view and passing it down. If you must create one in a custom initializer, pass the expression directly to `StateObject(wrappedValue:)` so the `@autoclosure` prevents redundant allocations:
 
 ```swift
-// WRONG - eagerly creates a new instance on every init call
-init(movie: Movie) {
-    let vm = MovieDetailsViewModel(movie: movie)
-    _viewModel = StateObject(wrappedValue: vm)
-}
+struct MovieDetailsView: View {
+    @StateObject private var viewModel: MovieDetailsViewModel
 
-// CORRECT - @autoclosure defers creation
-init(movie: Movie) {
-    _viewModel = StateObject(wrappedValue: MovieDetailsViewModel(movie: movie))
+    // WRONG - eagerly creates a new instance on every init call
+    init(movie: Movie) {
+        let vm = MovieDetailsViewModel(movie: movie)
+        _viewModel = StateObject(wrappedValue: vm)
+    }
+
+    // CORRECT - @autoclosure defers creation
+    init(movie: Movie) {
+        _viewModel = StateObject(wrappedValue: MovieDetailsViewModel(movie: movie))
+    }
+
+    var body: some View { /* ... */ }
 }
 ```
 

@@ -15,20 +15,20 @@
 
 These APIs have been deprecated long enough that there is no reason to use the old variants.
 
-### Simple Renames (drop-in replacements)
+### Compact Replacements
 
-These are direct replacements with no API shape change:
+These replacements have minimal API shape changes. Most are near-direct swaps; a few require an additional parameter or structural adjustment:
 
 - **`navigationTitle(_:)`** instead of `navigationBarTitle(_:)`
-- **`toolbar { ToolbarItem(...) }`** instead of `navigationBarItems(...)`
+- **`toolbar { ToolbarItem(...) }`** instead of `navigationBarItems(...)` (structural change)
 - **`toolbarVisibility(.hidden, for: .navigationBar)`** instead of `navigationBarHidden(_:)`
 - **`statusBarHidden(_:)`** instead of `statusBar(hidden:)`
 - **`ignoresSafeArea(_:edges:)`** instead of `edgesIgnoringSafeArea(_:)`
 - **`preferredColorScheme(_:)`** instead of `colorScheme(_:)`
-- **`foregroundStyle()`** instead of `foregroundColor()`
+- **`foregroundStyle(_:)`** instead of `foregroundColor(_:)`
 - **`clipShape(.rect(cornerRadius:))`** instead of `cornerRadius()`
 - **`textInputAutocapitalization(_:)`** instead of `autocapitalization(_:)` (note: `.never` replaces `.none`)
-- **`animation(_:value:)`** instead of `animation(_:)` without value (back-deploys to iOS 13+)
+- **`animation(_:value:)`** instead of `animation(_:)` (adds required `value:` parameter; back-deploys to iOS 13+)
 
 ### Presentation
 
@@ -239,7 +239,7 @@ Text("Content")
     }
 ```
 
-**Use `coordinateSpace(.named(_:))` instead of `coordinateSpace(name:)`.**
+**Use `.coordinateSpace(.named("id"))` instead of `.coordinateSpace(name: "id")`.**
 
 ---
 
