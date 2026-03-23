@@ -356,7 +356,7 @@ struct TipTable: View {
 }
 ```
 
-### Table with Dynamic Number of Rows
+### Table with Dynamic Number of Columns
 
 > **Availability:** iOS 17.4+, iPadOS 17.4+, Mac Catalyst 17.4+, macOS 14.4+, visionOS 1.1+
 
@@ -373,13 +373,15 @@ struct AudioChannel: Identifiable {
 struct AudioSample: Identifiable {
     let id: UUID
     let timestamp: TimeInterval
-    func level(channel: AudioChannel.ID) -> Double
+    func level(channel: AudioChannel.ID) -> Double {
+        1
+    }
 }
 
 @Observable
 class AudioSampleTrack {
     let channels: [AudioChannel]
-    var samples: some RandomAccessCollection<AudioSample> { get }
+    var samples: [AudioSample]
 }
 
 struct ContentView: View {
