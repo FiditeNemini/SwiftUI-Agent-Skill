@@ -18,7 +18,6 @@
 - [Reusable Styling with ViewModifier](#reusable-styling-with-viewmodifier)
 - [Skeleton Loading with Redacted Views](#skeleton-loading-with-redacted-views)
 - [AnyView](#anyview)
-- [containerRelativeFrame Over GeometryReader](#containerrelativeframe-over-geometryreader)
 - [UIViewRepresentable Essentials](#uiviewrepresentable-essentials)
 - [Troubleshooting](#troubleshooting)
 - [Summary Checklist](#summary-checklist)
@@ -248,6 +247,8 @@ struct ComplexSection: View {
 
 ## @ViewBuilder
 
+Use `@ViewBuilder` functions for small, simple sections (a few views, no expensive computation) that don't affect performance. They work particularly well for static content that doesn't depend on any `@State` or `@Binding`, since SwiftUI won't need to diff them independently. Extract to a separate `struct` when the section is complex, depends on state, or needs to be skipped during re-evaluation.
+
 The `@ViewBuilder` attribute is only required when a function or computed property returns multiple different views conditionally, for example through `if` or `switch`:
 
 ```swift
@@ -275,8 +276,6 @@ var conditionalText: some View {
     }
 }
 ```
-
-Use `@ViewBuilder` functions for small, simple sections (a few views, no expensive computation) that don't affect performance. They work particularly well for static content that doesn't depend on any `@State` or `@Binding`, since SwiftUI won't need to diff them independently. Extract to a separate `struct` when the section is complex, depends on state, or needs to be skipped during re-evaluation.
 
 Prefer `@ViewBuilder` when:
 
@@ -657,38 +656,6 @@ Because `AnyView` erases type information, SwiftUI loses some optimization oppor
 
 Use `AnyView` only when type erasure is truly necessary for API design.
 
-## containerRelativeFrame Over GeometryReader
-
-If you are working inside `List`, `ScrollView`, `LazyVGrid`, or `LazyHGrid` and need adaptive sizing for views inside scrollable or grid-based layouts, prefer `.containerRelativeFrame` where possible.
-
-```swift
-struct ContainerRelativeFrameExample: View {
-    var body: some View {
-        List {
-            ForEach(0...10, id: \.self) { _ in
-                Rectangle()
-                    .containerRelativeFrame([.horizontal, .vertical]) { length, axis in
-                        if axis == .vertical {
-                            return length * 0.3
-                        } else {
-                            return length * 0.5
-                        }
-                    }
-                    .foregroundColor(.orange)
-            }
-        }
-    }
-}
-```
-
-Why prefer it in these contexts:
-
-- integrates better with container sizing
-- avoids some layout side effects associated with `GeometryReader`
-- often communicates intent more clearly
-
-Use `GeometryReader` when you truly need arbitrary geometry information rather than container-relative sizing.
-
 ## UIViewRepresentable Essentials
 
 When bridging UIKit views into SwiftUI:
@@ -808,7 +775,6 @@ Ways to fix it:
 - [ ] Expose reusable styles via static member lookup when it improves discoverability
 - [ ] Use `.redacted(reason: .placeholder)` for loading skeletons
 - [ ] Avoid `AnyView` unless type erasure is truly needed
-- [ ] Prefer `containerRelativeFrame` over `GeometryReader` in container-based layouts where appropriate
 - [ ] In `UIViewRepresentable`, keep heavy work out of struct init
 - [ ] Use `_printChanges()` / `_logChanges()` to debug rendering behavior
 - [ ] Break up overly complex expressions when the compiler struggles
