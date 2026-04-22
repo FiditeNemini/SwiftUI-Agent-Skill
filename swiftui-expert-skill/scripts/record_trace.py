@@ -34,10 +34,11 @@ from pathlib import Path
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description="Record an Instruments .trace file.")
-    parser.add_argument("--list-devices", action="store_true",
-                        help="List devices and simulators as JSON, then exit.")
-    parser.add_argument("--list-templates", action="store_true",
-                        help="List template names as JSON, then exit.")
+    list_mode = parser.add_mutually_exclusive_group()
+    list_mode.add_argument("--list-devices", action="store_true",
+                           help="List devices and simulators as JSON, then exit.")
+    list_mode.add_argument("--list-templates", action="store_true",
+                           help="List template names as JSON, then exit.")
 
     parser.add_argument("--template", default="SwiftUI",
                         help="Template name (default: SwiftUI).")
@@ -58,7 +59,7 @@ def main(argv: list[str] | None = None) -> int:
 
     target = parser.add_mutually_exclusive_group()
     target.add_argument("--launch", metavar="APP",
-                        help="Launch this .app (path) / command and record it.")
+                        help="Launch this .app path and record it.")
     target.add_argument("--attach", metavar="PID_OR_NAME",
                         help="Attach to a running process by pid or name.")
     target.add_argument("--all-processes", action="store_true",
@@ -75,6 +76,13 @@ def main(argv: list[str] | None = None) -> int:
 
     if not (args.launch or args.attach or args.all_processes):
         print("error: need one of --launch, --attach, or --all-processes.",
+              file=sys.stderr)
+        return 2
+
+    if args.env and not args.launch:
+        # xctrace silently ignores --env outside launch mode; surfacing this
+        # explicitly saves agents a confusing "why didn't my env var apply?".
+        print("error: --env only applies to --launch; remove it or switch target mode.",
               file=sys.stderr)
         return 2
 

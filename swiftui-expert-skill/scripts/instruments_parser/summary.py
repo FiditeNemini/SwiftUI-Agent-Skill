@@ -29,7 +29,7 @@ def render(result: dict) -> str:
 
 def _skipped_block(title: str, lane: dict | None) -> list[str]:
     if lane is None:
-        return [f"## {title} — skipped (lane module not run)\n"]
+        return [f"## {title} — skipped (lane module not run)", ""]
     notes = lane.get("notes") or []
     note_text = f" — {notes[0]}" if notes else ""
     return [f"## {title} — skipped{note_text}", ""]

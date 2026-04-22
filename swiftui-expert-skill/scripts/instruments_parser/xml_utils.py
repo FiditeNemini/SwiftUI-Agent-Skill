@@ -44,6 +44,14 @@ class RowStream:
         # iterparse fires `end` events once an element is fully parsed, so ids
         # are visible to descendants via the cache. We only need `end` events;
         # row bodies are reconstructed from the end element itself in _row_dict.
+        #
+        # NOTE: we intentionally don't call `elem.clear()` after yielding a row.
+        # Instruments' XML is a single shared doc where any row can `ref` an
+        # `id` defined earlier (threads, processes, stacks, metadata), and
+        # clearing would break those later lookups. The tradeoff is peak RAM
+        # ≈ document size. That's fine for typical traces up to a few hundred
+        # MB; very large exports may need a smarter pass that first indexes
+        # referenced ids and only retains those.
         schema_seen = False
 
         context = ET.iterparse(_bytes_to_file(self._xml), events=("end",))
