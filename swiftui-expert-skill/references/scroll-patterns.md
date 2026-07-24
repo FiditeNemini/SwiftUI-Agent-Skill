@@ -2,15 +2,23 @@
 
 ## Table of Contents
 
+- [Choose the Appropriate Scroll API](#choose-the-appropriate-scroll-api)
 - [ScrollViewReader for Programmatic Scrolling](#scrollviewreader-for-programmatic-scrolling)
 - [Scroll Position Tracking](#scroll-position-tracking)
 - [Scroll Transitions and Effects](#scroll-transitions-and-effects)
 - [Scroll Target Behavior](#scroll-target-behavior)
 - [Summary Checklist](#summary-checklist)
 
+## Choose the Appropriate Scroll API
+
+- On iOS 18+, use `onScrollGeometryChange(for:of:action:)` to observe scroll geometry.
+- On iOS 18+, use `scrollPosition(_:)` with `ScrollPosition` to scroll by identity, offset, or edge.
+- On iOS 17+, use `scrollPosition(id:)` when an optional ID binding is sufficient.
+- Use `ScrollViewReader` when proxy-based scrolling or support for earlier versions is needed.
+
 ## ScrollViewReader for Programmatic Scrolling
 
-**Use `ScrollViewReader` for scroll-to-top, scroll-to-bottom, and anchor-based jumps.**
+**Use `ScrollViewReader` for proxy-based scroll-to-top, scroll-to-bottom, and anchor-based jumps.**
 
 ```swift
 struct ChatView: View {
@@ -106,24 +114,7 @@ struct OffsetTrackingView: View {
 }
 ```
 
-When only a threshold matters, transform the geometry into a `Bool`. The action then runs only when the scroll view crosses the threshold:
-
-```swift
-struct ThresholdView: View {
-    @State private var isPastThreshold = false
-
-    var body: some View {
-        ScrollView {
-            content
-        }
-        .onScrollGeometryChange(for: Bool.self) { geometry in
-            geometry.contentOffset.y + geometry.contentInsets.top > 100
-        } action: { _, newValue in
-            isPastThreshold = newValue
-        }
-    }
-}
-```
+When only a threshold matters, transform the geometry into a `Bool` so the action runs only when the scroll view crosses that threshold. The header visibility example below demonstrates this pattern.
 
 ### Programmatic Scroll Position (iOS 18+)
 
@@ -230,7 +221,7 @@ struct ContentView: View {
                         }
                     )
             }
-            .coordinateSpace(name: "scroll")
+            .coordinateSpace(.named("scroll"))
             .onPreferenceChange(ScrollOffsetPreferenceKey.self) { offset in
                 let shouldShowHeader = offset >= -50
                 if shouldShowHeader != showHeader {

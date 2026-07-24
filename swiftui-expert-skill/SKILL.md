@@ -50,7 +50,7 @@ Consult the reference file for each topic relevant to the current task:
 | Lists and ForEach | `references/list-patterns.md` |
 | Layout | `references/layout-best-practices.md` |
 | Sheets and navigation | `references/sheet-navigation-patterns.md` |
-| ScrollView | `references/scroll-patterns.md` |
+| ScrollView, scroll position, and scroll geometry | `references/scroll-patterns.md` |
 | Animations (basics) | `references/animation-basics.md` |
 | Animations (transitions) | `references/animation-transitions.md` |
 | Animations (advanced) | `references/animation-advanced.md` |
@@ -94,7 +94,7 @@ These are hard rules -- violations are always bugs:
 - `references/charts.md` -- Swift Charts marks, axes, selection, styling, Chart3D (iOS 26+)
 - `references/charts-accessibility.md` -- Charts VoiceOver, Audio Graph, fallback strategies
 - `references/sheet-navigation-patterns.md` -- Sheets, NavigationSplitView, Inspector
-- `references/scroll-patterns.md` -- ScrollViewReader, programmatic scrolling
+- `references/scroll-patterns.md` -- ScrollViewReader, scroll geometry, programmatic scrolling, target behaviors
 - `references/image-optimization.md` -- AsyncImage, downsampling, caching
 - `references/liquid-glass.md` -- iOS 26+ Liquid Glass effects and fallback patterns
 - `references/macos-scenes.md` -- Settings, MenuBarExtra, WindowGroup, multi-window
