@@ -31,14 +31,19 @@ This document provides guidance for AI agents working with this skill to ensure 
 
 **Exception**: Suggest separating business logic for testability without enforcing how.
 
-### 4. No Tool-Specific Instructions
-**Agents cannot use external tools.** Do not include:
-- Xcode Instruments profiling instructions
-- Debugging tool usage
-- IDE-specific features
-- Command-line tool usage beyond basic git
+### 4. Keep Tooling SwiftUI-Specific and Consent-Aware
+The skill includes focused Instruments tooling for SwiftUI performance work.
+Tool-specific instructions are allowed only when they directly support the
+bundled trace recording and analysis workflows. Do not add unrelated IDE,
+debugging, build-system, or general command-line guidance.
 
-**Exception**: Mention that users can profile with Instruments if performance issues arise, but don't provide detailed instructions.
+Agents using the trace tooling must:
+- Prefer app-scoped `--attach` or `--launch` recordings.
+- Explain the privacy implications and obtain explicit user approval before a
+  system-wide recording.
+- Pass `--allow-system-wide-recording` with `--all-processes` after approval.
+- Avoid exposing environment-variable values or other secrets in output.
+- Treat trace files and extracted logs as potentially sensitive user data.
 
 ## Content Guidelines
 
@@ -76,7 +81,7 @@ This document provides guidance for AI agents working with this skill to ensure 
 - Swift concurrency deep dives (actors, sendable, etc.)
 - Code formatting and style rules
 - Architectural patterns and mandates
-- Tool usage instructions (Instruments, debuggers)
+- Tool usage unrelated to the bundled SwiftUI Instruments workflows
 - File organization requirements
 - Testing frameworks and patterns
 - Build system configuration
@@ -92,7 +97,7 @@ This document provides guidance for AI agents working with this skill to ensure 
 ### Avoid Prescriptive Language:
 - ❌ "You must organize properties in this order"
 - ❌ "Always use MVVM architecture"
-- ❌ "Profile with Instruments following these steps"
+- ❌ "Run unrelated debugger or build-system commands"
 - ❌ "Structure your project like this"
 
 ## Examples
@@ -116,10 +121,9 @@ When you encounter `UIImage(data:)`, consider suggesting image downsampling as a
 3. Body
 4. Helpers
 
-**Use Instruments to profile:**
-1. Open Instruments
-2. Select SwiftUI template
-3. Record and analyze...
+**Use unrelated tooling:**
+1. Reconfigure the build system
+2. Run a general-purpose debugger workflow
 ```
 
 ## Updating the Skill
