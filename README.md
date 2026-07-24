@@ -1,6 +1,6 @@
 # SwiftUI Expert Skill
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](https://github.com/AvdLee/SwiftUI-Agent-Skill/blob/main/LICENSE)
-[![Weekly Installs](https://img.shields.io/badge/weekly%20installs-10.9k-brightgreen)](https://skills.sh/avdlee/swiftui-agent-skill/swiftui-expert-skill)
+[![Weekly Installs](https://img.shields.io/badge/weekly%20installs-16.6k-brightgreen)](https://skills.sh/avdlee/swiftui-agent-skill/swiftui-expert-skill)
 [![GitHub Release](https://img.shields.io/github/v/release/AvdLee/SwiftUI-Agent-Skill)](https://github.com/AvdLee/SwiftUI-Agent-Skill/releases)
 [![GitHub Stars](https://img.shields.io/github/stars/AvdLee/SwiftUI-Agent-Skill?style=flat)](https://github.com/AvdLee/SwiftUI-Agent-Skill/stargazers)
 
@@ -17,6 +17,8 @@ This repository distills practical SwiftUI best practices into actionable, conci
 - [Swift Concurrency Expert](https://github.com/AvdLee/Swift-Concurrency-Agent-Skill)
 - [Core Data Expert](https://github.com/AvdLee/Core-Data-Agent-Skill)
 - [Swift Testing Expert](https://github.com/AvdLee/Swift-Testing-Agent-Skill)
+- [Xcode Build Optimization Agent Skill](https://github.com/AvdLee/Xcode-Build-Optimization-Agent-Skill)
+- [Xcode Simulator AI Control Agent Skill](https://www.rocketsim.app/docs/features/agentic-development/agent-skill/)
 
 ## How to Use This Skill
 
@@ -49,10 +51,8 @@ To install this Skill for your personal use in Claude Code:
 /plugin install swiftui-expert@swiftui-expert-skill
 ```
 
-### Option C: Cursor plugin (coming soon)
-This repository is now packaged for Cursor plugin submission, but the marketplace listing is not live yet.
-
-Once approved, you'll be able to install it from the Cursor Marketplace.
+### Option C: Cursor plugin
+This repository is packaged as a Cursor plugin. See [Cursor plugins documentation](https://cursor.com/docs/plugins) for installation instructions.
 
 #### Project Configuration
 To automatically provide this Skill to everyone working in a repository, configure the repository's `.claude/settings.json`:
@@ -84,7 +84,16 @@ cp -R swiftui-expert-skill/ "$CODEX_HOME/skills/swiftui-expert-skill"
 
 See [Codex skills documentation](https://developers.openai.com/codex/skills/) for details on where to save skills.
 
-### Option E: Manual install
+### Option E: Using pi package manager
+
+Install via [pi](https://github.com/badlogic/pi-mono):
+```bash
+pi install https://github.com/AvdLee/SwiftUI-Agent-Skill
+```
+
+The skill will be available automatically in pi sessions.
+
+### Option F: Manual install
 1) **Clone** this repository.
 2) **Install or symlink** the `swiftui-expert-skill/` folder following your tool’s official skills installation docs (see links below).
 3) **Use your AI tool** as usual and ask it to use the “swiftui-expert” skill for SwiftUI tasks.
@@ -92,7 +101,7 @@ See [Codex skills documentation](https://developers.openai.com/codex/skills/) fo
 #### Where to Save Skills
 Follow your tool’s official documentation, here are a few popular ones:
 - **Codex:** [Where to save skills](https://developers.openai.com/codex/skills/#where-to-save-skills)
-- **Claude:** [Using Skills](https://platform.claude.com/docs/en/agents-and-tools/agent-skills/overview#using-skills)
+- **Claude:** [Using Skills](https://docs.claude.com/en/docs/agents-and-tools/agent-skills/overview)
 - **Cursor:** [Plugins documentation](https://cursor.com/docs/plugins) or [Enabling Skills](https://cursor.com/docs/context/skills#enabling-skills)
 
 **How to verify**:
@@ -115,8 +124,40 @@ This skill covers the full surface of SwiftUI development -- from state manageme
 - **Accessibility** -- VoiceOver, Dynamic Type, grouping, traits
 - **Image optimization** -- AsyncImage, downsampling, caching
 - **Latest APIs** -- deprecated-to-modern migration guide (iOS 15+ through iOS 26+)
+- **Instruments trace recording & analysis** -- bundled `xctrace` toolchain for diagnosing hangs, hitches, and expensive SwiftUI view updates (see below)
 
 Non-opinionated: focuses on correctness and performance, not architecture or code style.
+
+## Recording & Analysing Instruments Traces
+
+Unlike the other reference files — which are text guidance — this part of the skill ships an executable Python toolchain that wraps `xctrace`. It lets the agent **record** a new `.trace` and **analyse** an existing one end-to-end: the parser reads the Time Profiler, Hangs, Animation Hitches, SwiftUI updates, and SwiftUI cause-graph lanes, correlates hangs/hitches with main-thread samples, and emits JSON + markdown so the agent can reason over structured data instead of the raw `xctrace export` firehose.
+
+**When it triggers:**
+
+- A `.trace` path appears in the prompt (analysis).
+- The user asks to record, profile, or capture a session (recording).
+
+**What the agent can then ask:**
+
+```text
+Analyse ~/Desktop/MyApp.trace and tell me what's wrong.
+
+Focus analysis on what happens right after the 'feed loaded' log.
+
+Which of my SwiftUI views is responsible for the hang around 6s?
+
+Record a new trace: attach to MyApp on my iPhone — I'll tell you when I'm done.
+```
+
+**Under the hood:**
+
+- `scripts/record_trace.py` — wraps `xctrace record`. Supports attach / launch / all-processes, stop-file for agent-driven sessions, time-limits, JSON device & template discovery.
+- `scripts/analyze_trace.py` — runs the five-lane analysis. Discovery modes `--list-logs`, `--list-signposts`, `--fanin-for` let the agent scope to a time window or trace a specific view back to its invalidation sources. `--window START_MS:END_MS` restricts every lane to a slice.
+- `scripts/instruments_parser/` — one module per lane (`time_profiler`, `hangs`, `hitches`, `swiftui`, `causes`), plus cross-lane `correlate` and a markdown `summary` renderer. Pure stdlib Python 3; only external dep is `xctrace` (ships with Xcode).
+
+**Key diagnostic:** `main_running_coverage_pct` on each hang/hitch correlation. < 25 % → main thread was blocked (I/O, lock, sync await); ≥ 75 % → CPU-bound. This single metric separates two radically different fix paths.
+
+Full guidance: [`swiftui-expert-skill/references/trace-analysis.md`](swiftui-expert-skill/references/trace-analysis.md) and [`swiftui-expert-skill/references/trace-recording.md`](swiftui-expert-skill/references/trace-recording.md).
 
 ## Skill Structure
 <!-- BEGIN REFERENCE STRUCTURE -->
@@ -130,18 +171,25 @@ swiftui-expert-skill/
     animation-transitions.md - View transitions, matchedGeometryEffect, and state changes
     charts-accessibility.md - Charts accessibility, fallback strategies, and WWDC sessions
     charts.md - Swift Charts marks, axes, selection, styling, composition, and Chart3D
+    focus-patterns.md
     image-optimization.md - AsyncImage usage, downsampling, caching
     latest-apis.md
     layout-best-practices.md - Layout patterns and GeometryReader alternatives
     liquid-glass.md - iOS 26+ glass effects and fallback patterns
     list-patterns.md - ForEach identity and list performance
+    localization.md
     macos-scenes.md - Scene lifecycle, multi-window setups, and menu bar scenes on macOS
     macos-views.md - macOS-specific SwiftUI views and platform differences from iOS
     macos-window-styling.md - Window chrome, toolbar, and title bar styling in SwiftUI
     performance-patterns.md - Hot-path optimizations and update control
+    previews.md
     scroll-patterns.md - ScrollViewReader and programmatic scrolling
     sheet-navigation-patterns.md - Sheets and type-safe navigation
+    soft-deprecation.md
     state-management.md - Property wrapper selection and data flow
+    text-patterns.md
+    trace-analysis.md
+    trace-recording.md
     view-structure.md - View extraction and composition patterns
 ```
 <!-- END REFERENCE STRUCTURE -->
@@ -157,7 +205,7 @@ The repository includes a maintenance skill for keeping API guidance current:
     scan-manifest.md     - Categorized API areas, doc paths, and search queries to scan
 ```
 
-Use this skill after new iOS or Xcode releases to refresh the deprecated API reference. It requires the [Sosumi MCP](https://github.com/kanaa257/sosumi.ai) to be available. See `AGENTS.md` or `CONTRIBUTING.md` for details.
+Use this skill after new iOS or Xcode releases to refresh the deprecated API reference. It requires the [Sosumi MCP](https://github.com/NSHipster/sosumi.ai) to be available. See `AGENTS.md` or `CONTRIBUTING.md` for details.
 
 Note: only `swiftui-expert-skill` is intended to be published in the Cursor plugin. The maintenance skill remains a repository workflow utility.
 
