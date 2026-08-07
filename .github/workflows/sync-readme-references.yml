@@ -3,7 +3,7 @@ name: Sync README reference structure
 on:
   pull_request:
     paths:
-      - "swiftui-expert-skill/references/**"
+      - "skills/swiftui-expert-skill/references/**"
 
 jobs:
   sync-readme:

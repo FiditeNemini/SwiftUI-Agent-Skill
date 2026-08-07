@@ -8,6 +8,8 @@ Expert guidance for any AI coding tool that supports the [Agent Skills open form
 
 This repository distills practical SwiftUI best practices into actionable, concise references for agents and code review workflows.
 
+This repository is packaged as a portable [Agent Plugin](https://agent-plugins.org) (spec 1.0.0): compatible clients discover the skill automatically from the root `plugin.json` manifest and the `skills/` directory. Client-specific manifests for Claude Code, Cursor, Codex, and pi are included as well.
+
 ## Who this is for
 - Teams adopting modern SwiftUI APIs who want quick, correct defaults
 - Developers reviewing or refactoring SwiftUI views and data flow
@@ -76,10 +78,10 @@ To automatically provide this Skill to everyone working in a repository, configu
 When team members open the project, Claude Code will prompt them to install the Skill.
 
 ### Option D: Codex / OpenAI-compatible tools
-This repository includes an `agents/openai.yaml` manifest. Copy or symlink the `swiftui-expert-skill/` folder into your Codex skills directory:
+This repository includes an `agents/openai.yaml` manifest. Copy or symlink the `skills/swiftui-expert-skill/` folder into your Codex skills directory:
 
 ```bash
-cp -R swiftui-expert-skill/ "$CODEX_HOME/skills/swiftui-expert-skill"
+cp -R skills/swiftui-expert-skill/ "$CODEX_HOME/skills/swiftui-expert-skill"
 ```
 
 See [Codex skills documentation](https://developers.openai.com/codex/skills/) for details on where to save skills.
@@ -95,8 +97,10 @@ The skill will be available automatically in pi sessions.
 
 ### Option F: Manual install
 1) **Clone** this repository.
-2) **Install or symlink** the `swiftui-expert-skill/` folder following your tool’s official skills installation docs (see links below).
+2) **Install or symlink** the `skills/swiftui-expert-skill/` folder following your tool’s official skills installation docs (see links below).
 3) **Use your AI tool** as usual and ask it to use the “swiftui-expert” skill for SwiftUI tasks.
+
+> Note: the skill folder moved from the repository root to `skills/swiftui-expert-skill/` when adopting the Agent Plugins format. A symlink at the old `swiftui-expert-skill/` path keeps existing local clones and scripts working; it will be removed in the next major version.
 
 #### Where to Save Skills
 Follow your tool’s official documentation, here are a few popular ones:
@@ -106,7 +110,7 @@ Follow your tool’s official documentation, here are a few popular ones:
 
 **How to verify**:
 
-Your agent should reference the workflow/checklists in `swiftui-expert-skill/SKILL.md` and jump into the relevant reference file for your task.
+Your agent should reference the workflow/checklists in `skills/swiftui-expert-skill/SKILL.md` and jump into the relevant reference file for your task.
 
 ## What's Inside
 
@@ -157,12 +161,12 @@ Record a new trace: attach to MyApp on my iPhone — I'll tell you when I'm done
 
 **Key diagnostic:** `main_running_coverage_pct` on each hang/hitch correlation. < 25 % → main thread was blocked (I/O, lock, sync await); ≥ 75 % → CPU-bound. This single metric separates two radically different fix paths.
 
-Full guidance: [`swiftui-expert-skill/references/trace-analysis.md`](swiftui-expert-skill/references/trace-analysis.md) and [`swiftui-expert-skill/references/trace-recording.md`](swiftui-expert-skill/references/trace-recording.md).
+Full guidance: [`skills/swiftui-expert-skill/references/trace-analysis.md`](skills/swiftui-expert-skill/references/trace-analysis.md) and [`skills/swiftui-expert-skill/references/trace-recording.md`](skills/swiftui-expert-skill/references/trace-recording.md).
 
 ## Skill Structure
 <!-- BEGIN REFERENCE STRUCTURE -->
 ```text
-swiftui-expert-skill/
+skills/swiftui-expert-skill/
   SKILL.md
   references/
     accessibility-patterns.md - Accessibility traits, grouping, Dynamic Type, and VoiceOver
