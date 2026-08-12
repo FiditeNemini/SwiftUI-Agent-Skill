@@ -11,6 +11,7 @@ from unittest import mock
 
 SCRIPT = (
     Path(__file__).parents[1]
+    / "skills"
     / "swiftui-expert-skill"
     / "scripts"
     / "record_trace.py"

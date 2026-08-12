@@ -1,6 +1,6 @@
 {
   "name": "swiftui-expert",
-  "version": "4.0.0",
+  "version": "4.1.0",
   "description": "Expert SwiftUI guidance for state management, view composition, performance, and iOS 26+ Liquid Glass adoption.",
   "author": {
     "name": "Antoine van der Lee",
@@ -23,6 +23,7 @@
     "sheets"
   ],
   "skills": [
-    "swiftui-expert-skill"
-  ]
+    "skills/swiftui-expert-skill"
+  ],
+  "homepage": "https://github.com/AvdLee/SwiftUI-Agent-Skill"
 }
