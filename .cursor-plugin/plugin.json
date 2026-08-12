@@ -8,7 +8,7 @@
   },
   "repository": "https://github.com/AvdLee/SwiftUI-Agent-Skill",
   "license": "MIT",
-  "logo": "assets/logo.svg",
+  "logo": "skills/swiftui-expert-skill/assets/logo.png",
   "keywords": [
     "swift",
     "swiftui",
