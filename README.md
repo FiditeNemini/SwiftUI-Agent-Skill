@@ -24,7 +24,7 @@ This repository is packaged as a portable [Agent Plugin](https://agent-plugins.o
 
 ## How to Use This Skill
 
-### Option A: Using skills.sh
+### Option A: Using skills.sh (recommended)
 Install this skill with a single command:
 
 ```bash
@@ -36,7 +36,15 @@ For more information, [visit the skills.sh platform page](https://skills.sh/avdl
 Then use the skill in your AI agent, for example:
 > Use the swiftui expert skill and review the current SwiftUI code for state-management and performance improvements
 
-### Option B: Claude Code Plugin
+### Option B: ChatGPT & Codex (OpenAI Plugins Directory)
+
+This plugin is distributed through the universal OpenAI Plugins Directory shared by ChatGPT and Codex:
+
+1. In the ChatGPT desktop app, select **Codex** (or ChatGPT with **Work** enabled), or use the plugin browser in Codex CLI.
+2. Open **Plugins** and search for "SwiftUI Expert".
+3. Install the plugin. The skill becomes available in new chats and sessions.
+
+### Option C: Claude Code Plugin
 
 #### Personal Usage
 To install this Skill for your personal use in Claude Code:
@@ -52,9 +60,6 @@ To install this Skill for your personal use in Claude Code:
 ```bash
 /plugin install swiftui-expert@swiftui-expert-skill
 ```
-
-### Option C: Cursor plugin
-This repository is packaged as a Cursor plugin. See [Cursor plugins documentation](https://cursor.com/docs/plugins) for installation instructions.
 
 #### Project Configuration
 To automatically provide this Skill to everyone working in a repository, configure the repository's `.claude/settings.json`:
@@ -77,36 +82,13 @@ To automatically provide this Skill to everyone working in a repository, configu
 
 When team members open the project, Claude Code will prompt them to install the Skill.
 
-### Option D: Codex / OpenAI-compatible tools
-This repository includes an `agents/openai.yaml` manifest. Copy or symlink the `skills/swiftui-expert-skill/` folder into your Codex skills directory:
+### Option D: Cursor Plugin
 
-```bash
-cp -R skills/swiftui-expert-skill/ "$CODEX_HOME/skills/swiftui-expert-skill"
-```
+Load the plugin from a local clone by placing it in `~/.cursor/plugins/local`, or install it from the Cursor Marketplace once listed. Cursor supports both the portable Agent Plugins manifest (`plugin.json`) and the Cursor Plugin manifest (`.cursor-plugin/plugin.json`) included in this repository.
 
-See [Codex skills documentation](https://developers.openai.com/codex/skills/) for details on where to save skills.
+### Using another tool?
 
-### Option E: Using pi package manager
-
-Install via [pi](https://github.com/badlogic/pi-mono):
-```bash
-pi install https://github.com/AvdLee/SwiftUI-Agent-Skill
-```
-
-The skill will be available automatically in pi sessions.
-
-### Option F: Manual install
-1) **Clone** this repository.
-2) **Install or symlink** the `skills/swiftui-expert-skill/` folder following your tool’s official skills installation docs (see links below).
-3) **Use your AI tool** as usual and ask it to use the “swiftui-expert” skill for SwiftUI tasks.
-
-> Note: the skill folder moved from the repository root to `skills/swiftui-expert-skill/` when adopting the Agent Plugins format. A symlink at the old `swiftui-expert-skill/` path keeps existing local clones and scripts working; it will be removed in the next major version.
-
-#### Where to Save Skills
-Follow your tool’s official documentation, here are a few popular ones:
-- **Codex:** [Where to save skills](https://developers.openai.com/codex/skills/#where-to-save-skills)
-- **Claude:** [Using Skills](https://docs.claude.com/en/docs/agents-and-tools/agent-skills/overview)
-- **Cursor:** [Plugins documentation](https://cursor.com/docs/plugins) or [Enabling Skills](https://cursor.com/docs/context/skills#enabling-skills)
+See [INSTALLATION.md](INSTALLATION.md) for all other installation options: pi, Gemini CLI, Autohand Code, and manual installation.
 
 **How to verify**:
 
